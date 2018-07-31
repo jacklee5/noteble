@@ -1,0 +1,31 @@
+body{
+    margin:0px;
+    font-family:"Ubuntu";
+    background:#FAFAFA;
+}
+h1, h2, h3, h4, h5, h6{
+    font-family:"Fredoka One";
+}
+.background-primary{
+    background:#17465D;
+}
+.background-secondary{
+    background:#227367;
+}
+.background-accent{
+    background:#F0E277;
+}
+.color-primary{
+    color:#17465D;
+}
+.color-secondary{
+    color:#227367;
+}
+.color-accent{
+    color:#F0E277;
+}
+.center{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+}

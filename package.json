@@ -1,0 +1,24 @@
+{
+  "name": "noteble",
+  "version": "1.0.0",
+  "description": "a custom notetaking app",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jacklee5/noteble.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jacklee5/noteble/issues"
+  },
+  "homepage": "https://github.com/jacklee5/noteble#readme",
+  "dependencies": {
+    "electron": "^2.0.5",
+    "mongodb": "^3.1.1"
+  }
+}

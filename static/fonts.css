@@ -1,0 +1,61 @@
+@font-face {
+    font-family: 'Fredoka One';
+    src:  url('../fonts/Fredoka_One/FredokaOne-Regular.woff') format('woff');
+    font-weight:400;
+    font-style:normal;
+}
+@font-face {
+    font-family: 'Fredoka One';
+    src:  url('../fonts/Fredoka_One/FredokaOne-Regular.woff2') format('woff2');
+    font-weight:400;
+    font-style:normal;
+}
+@font-face{
+    font-family: "Ubuntu";
+    src: url("../fonts/Ubuntu/ubuntu-regular-webfont.woff") format("woff"),
+        url("../fonts/Ubuntu/ubuntu-regular-webfont.woff2") format("woff2");
+    font-weight:400;
+    font-style:normal;
+}
+@font-face{
+    font-family: "Ubuntu";
+    src: url("../fonts/Ubuntu/ubuntu-italic-webfont.woff") format("woff"),
+        url("../fonts/Ubuntu/ubuntu-italic-webfont.woff2") format("woff2");
+    font-weight:400;
+    font-style:italic;
+}
+@font-face{
+    font-family: "Ubuntu";
+    src: url("../fonts/Ubuntu/ubuntu-medium-webfont.woff") format("woff"),
+        url("../fonts/Ubuntu/ubuntu-medium-webfont.woff2") format("woff2");
+    font-weight:500;
+    font-style:normal;
+}
+@font-face{
+    font-family: "Ubuntu";
+    src: url("../fonts/Ubuntu/ubuntu-mediumitalic-webfont.woff") format("woff"),
+        url("../fonts/Ubuntu/ubuntu-mediumitalic-webfont.woff2") format("woff2");
+    font-weight:500;
+    font-style:italic;
+}
+@font-face{
+    font-family: "Ubuntu";
+    src: url("../fonts/Ubuntu/ubuntu-bold-webfont.woff") format("woff"),
+        url("../fonts/Ubuntu/ubuntu-bold-webfont.woff2") format("woff2");
+    font-weight:700;
+    font-style:normal;
+}
+@font-face{
+    font-family: "Ubuntu";
+    src: url("../fonts/Ubuntu/ubuntu-bolditalic-webfont.woff") format("woff"),
+        url("../fonts/Ubuntu/ubuntu-bolditalic-webfont.woff2") format("woff2");
+    font-weight:700;
+    font-style:italic;
+}
+@font-face{
+    font-family: "Ubuntu";
+    src: url("../fonts/Ubuntu/ubuntu-light-webfont.woff") format("woff"),
+        url("../fonts/Ubuntu/ubuntu-light-webfont.woff2") format("woff2");
+    font-weight:300;
+    font-style:normal;
+}
