@@ -1,3 +1,12 @@
+/**animations**/
+@keyframes fadeIn{
+    from{
+        opacity:0;
+    }to{
+        opacity:1;
+    }
+}
+
 body{
     margin:0px;
     font-family:"Ubuntu";
@@ -7,25 +16,278 @@ h1, h2, h3, h4, h5, h6{
     font-family:"Fredoka One";
 }
 .background-primary{
-    background:#17465D;
+    background:#C2D4D1;
 }
 .background-secondary{
-    background:#227367;
+    background:#88C9A5;
 }
 .background-accent{
-    background:#F0E277;
+    background:#2847B1;
 }
 .color-primary{
-    color:#17465D;
+    color:#C2D4D1;
 }
 .color-secondary{
-    color:#227367;
+    color:#88C9A5;
 }
 .color-accent{
-    color:#F0E277;
+    color:#2847B1;
 }
 .center{
     position:absolute;
     left:50%;
     transform:translateX(-50%);
+}
+.input{
+    display:inline-block;
+    flex-grow:1;
+    position:relative;
+}
+.underline{
+    width:calc(100% - 16px);
+    height:1px;
+    width:0px;
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    transition: all .2s cubic-bezier(.4,0,1,1);
+}
+.input input:focus+.underline{
+    width:calc(100% - 16px);
+}
+input{
+    padding:8px;
+    outline:none;
+    border:none;
+    background:none;
+    font-weight:500;
+    width:100%;
+}
+.more-icon{
+    background:white;
+    border-radius:50%;
+    padding:8px;
+    transition: all .2s cubic-bezier(.4,0,1,1);
+}
+.more-icon:hover{
+    background:rgba(0,0,0,0.2);
+}
+.more-icon:active{
+    background:rgba(0,0,0,0.3);
+}
+#title{
+    font-size:56px;
+    text-align:center;
+    margin-bottom:0px;
+    margin-top:40px;
+}
+#container{
+    background:white;
+    box-shadow:0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12),0 2px 4px -1px rgba(0,0,0,.2);
+    width:80vw;
+    height:calc(100vh - 192px);
+    margin:16px;
+    position:relative;
+}
+#notebooks{
+    height: calc(100% - 64px);
+}
+#create-new{
+    position:absolute;
+    left:0px;
+    bottom:0px;
+    width:100%;
+    height:64px;
+    box-shadow:0 -2px 2px 0 rgba(0,0,0,.14),0 -3px 1px -2px rgba(0,0,0,.2),0 -1px 5px 0 rgba(0,0,0,.12);
+    display:flex;
+    box-sizing: border-box;
+    padding:16px;
+}
+#notebook-list{
+    width:100%;
+    border-collapse: collapse;
+}
+#notebook-list td, #notebook-list th{
+    text-align:left;
+}
+#notebook-list tr{
+    border-bottom: rgba(0,0,0,0.5) 1px solid;
+    cursor:pointer;
+}
+#notebook-list th:nth-child(1){
+    width:70%;
+}
+#notebook-list tr:nth-child(1){
+    background: #E0E0E0;
+    border-bottom:none;
+    box-shadow:0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
+    cursor:auto;
+}
+.button{
+    text-shadow:none;
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: white;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
+    height: 36px;
+    min-width: 64px;
+    padding: 0 16px;
+    display: inline-block;
+    cursor: pointer;
+    text-decoration: none;
+    line-height: 36px;
+    vertical-align: middle;
+    text-align:center;
+    box-sizing: border-box;
+}
+.button:active{
+    transition: all .2s cubic-bezier(.4,0,1,1);
+    box-shadow:0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12),0 2px 4px -1px rgba(0,0,0,.2);
+}
+.more-icon{
+    margin:-8px;
+    position:relative;
+    top:4px;
+    text-align: right;
+}
+#popup{
+    display:none;
+    animation:popupEnter .3s forwards;
+    padding:4px 0px;
+    background:white;
+}
+@keyframes popupEnter{
+    from{
+        opacity:0;
+        box-shadow:none;
+    }to{
+        opacity:1;
+        box-shadow:0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12),0 2px 4px -1px rgba(0,0,0,.2);
+    }
+}
+.popup-option{
+    padding:8px;
+    transition: all .2s cubic-bezier(.4,0,1,1);
+    display:block;
+    cursor:pointer;
+}
+.popup-option:hover{
+    background:rgba(0,0,0,0.2);
+}
+.popup-option:active{
+    background:rgba(0,0,0,0.3);
+}
+.page{
+    display:none;
+    animation:fadeIn .3s forwards;
+}
+.start{
+    display:block;
+}
+header{
+    position:relative;
+    width:100%;
+    height:64px;
+    box-shadow:0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12),0 2px 4px -1px rgba(0,0,0,.2);
+    box-sizing:border-box;
+    z-index:2;
+}
+header .material-icons{
+    cursor:pointer;
+    padding:20px;
+}
+header h1{
+    display:inline-block;
+    margin:0px;
+    font-family:"Ubuntu";
+    line-height:64px;
+    font-weight:400;
+    font-size:20px;
+    vertical-align:top;
+}
+.sidebar{
+    position:relative;
+    height:calc(100vh - 64px);
+    width:256px;
+    background:white;
+    box-shadow:0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12),0 2px 4px -1px rgba(0,0,0,.2);
+    z-index:1;
+    padding-top:8px;
+    box-sizing: border-box;
+}
+.sidebar .note{
+    padding:8px 16px;
+    display:block;
+    transition:.3s all;
+    cursor:pointer;
+}
+.sidebar .note:hover{
+    background:rgba(0,0,0,0.3);
+}
+#note-container{
+    position:absolute;
+    top:64px;
+    left:256px;
+    width:calc(100% -  256px);
+    height:calc(100vh - 64px);
+    box-sizing: border-box;
+}
+#note-content{
+    padding:16px;
+    font-size:14px;
+}
+#note-content:focus{
+    outline:none;
+}
+#new-note{
+    position:absolute;
+    bottom:0px;
+}
+#new-note .input, #new-note input, #new-note .button{
+    width:100%;
+    box-sizing: border-box;
+}
+#new-note .input{
+    margin-bottom:8px;
+}
+#new-note input{
+    padding:16px;
+}
+#note-container header{
+    width:100%;
+    height:64px;
+    background:#E0E0E0;
+    position:relative;
+    z-index:0;
+}
+#note-container header h1{
+    margin-left:16px;
+}
+#note-actions{
+    position:absolute;
+    right:0px;
+    top:24px;
+    height:64px;
+    box-sizing:border-box;
+    padding:14px;
+    display:none;
+    animation:fadeIn .3s forwards;
+}
+.background-red{
+    background:#F44336;
+}
+.background-green{
+    background:#4CAF50;
+}
+.background-blue{
+    background:#2196F3;
+}
+#note-container header .material-icons{
+    vertical-align:text-top;
+    padding:0px;
+}
+#note-details{
+    padding:16px;
+    font-size:14px;
 }
