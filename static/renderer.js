@@ -1,6 +1,8 @@
 //dependencies
 const sqlite3 = require("sqlite3");
 const moment = require("moment");
+const remote = require('electron').remote;
+const app = remote.app;
 
 /*global variables*/
 let currentNotebook = {};
@@ -212,7 +214,8 @@ let loadNote = () => {
 
 
 //initialize db
-let db = new sqlite3.Database('./db.sqlite');
+console.log(app.getPath("userData"));
+let db = new sqlite3.Database(app.getPath("userData") + '/db.sqlite');
 db.run("CREATE TABLE IF NOT EXISTS notebooks (notebook_id INTEGER PRIMARY KEY, name TEXT, date_modified INTEGER)");
 db.run("CREATE TABLE IF NOT EXISTS notes(note_id INTEGER PRIMARY KEY, content TEXT, name TEXT, date INTEGER, notebook_id INTEGER, FOREIGN KEY(notebook_id) REFERENCES notebooks(notebook_id));");
 
