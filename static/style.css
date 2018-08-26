@@ -267,12 +267,11 @@ header h1{
 #note-actions{
     position:absolute;
     right:0px;
-    top:24px;
+    top:-1px;
     height:64px;
     box-sizing:border-box;
     padding:14px;
     display:none;
-    animation:fadeIn .3s forwards;
 }
 .background-red{
     background:#F44336;
@@ -290,4 +289,26 @@ header h1{
 #note-details{
     padding:16px;
     font-size:14px;
+}
+#note-header{
+    transition: .3s all;
+    position:fixed;
+    width:calc(100% - 256px);
+    background:#FAFAFA;
+    height:64px;
+    animation:fadeIn .3s forwards;
+}
+#note-date{
+    transition: .3s all;
+}
+#note-content{
+    margin-top:64px;
+    height: calc(100% - 64px);
+    overflow:auto;
+    box-sizing: border-box;
+}
+#note-title{
+    font-size:24px;
+    margin:4px 0px;
+    transition: .3s all;
 }

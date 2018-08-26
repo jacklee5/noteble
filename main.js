@@ -1,7 +1,8 @@
 // Modules to control application life and create native browser window
 const {
     app,
-    BrowserWindow
+    BrowserWindow,
+    Menu
 } = require('electron')
 
 const ipc = require("electron").ipcMain;
@@ -32,7 +33,7 @@ function createWindow() {
     
     mainWindow.once('ready-to-show', () => {
         mainWindow.show()
-    })
+    }); 
 }
 
 // This method will be called when Electron has finished
