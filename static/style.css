@@ -171,6 +171,7 @@ input{
     transition: all .2s cubic-bezier(.4,0,1,1);
     display:block;
     cursor:pointer;
+    white-space:nowrap;
 }
 .popup-option:hover{
     background:rgba(0,0,0,0.2);
@@ -282,6 +283,9 @@ header h1{
 .background-blue{
     background:#2196F3;
 }
+.background-orange{
+    background:#FF9800;
+}
 #note-container header .material-icons{
     vertical-align:text-top;
     padding:0px;
@@ -311,4 +315,22 @@ header h1{
     font-size:24px;
     margin:4px 0px;
     transition: .3s all;
+}
+#notebook-options{
+    float:right;
+    margin:12px;
+    padding:8px;
+    transition:.3s all;
+    border-radius:50%;
+}
+#notebook-options:hover{
+    background:rgba(0,0,0,0.2);
+}
+#notebook-options:active{
+    background:rgba(0,0,0,0.3);
+}
+h1 p{
+    font-weight:400;
+    font-size:14px;
+    font-family: "Ubuntu";
 }

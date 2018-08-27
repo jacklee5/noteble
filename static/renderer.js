@@ -14,7 +14,7 @@ let currentNote = {};
 
 /*constants*/
 //dev mode
-const DEV_MODE = true;
+const DEV_MODE = false;
 //names corresponding to page #'s
 const PAGES = {
     START: 0,
@@ -25,7 +25,7 @@ const SETUPS = {
     //start page
     0: () => {
         refresh();
-        setMenu(PAGES.START);
+        setMenu(MENUS.START);
     },
     //notebook page
     1: () => {
@@ -35,13 +35,58 @@ const SETUPS = {
         content.innerHTML = "";
         content.contentEditable = false;
         
-        //re-initialize menu
-        setMenu(PAGES.NOTEBOOK);
+        //change menu
+        setMenu(MENUS.NOTEBOOK);
+    }
+}
+//menu names
+const MENUS = {
+    START: 0,
+    NOTEBOOK: 1,
+    NOTE: 2
+}
+//some common menu items
+const MENU_ITEMS = {
+    EXIT: {
+        label:"Exit",
+        click(){
+            if(confirm("Are you sure you want to quit?")) app.quit();
+        }
+    },
+    RENAME_NOTEBOOK: {
+        label: "Rename Notebook",
+        click(){
+            let titleEl = document.getElementById("notebook-title");
+            titleEl.contentEditable = true;
+            titleEl.focus();
+            document.execCommand('selectAll',false,null);
+        }
+    },
+    DELETE_NOTEBOOK: {
+        label: "Delete Notebook",
+        click(){
+            deleteNotebook(currentNotebook.id);
+            showPage(PAGES.START);
+        }
+    },
+    NEW_NOTE: {
+        label: "New Note",
+        click(){
+            createNote("Untitled Note", () => {
+                loadNewestNote(() => {
+                    let titleEl = document.getElementById("note-title");
+                    titleEl.contentEditable = true;
+                    titleEl.focus();
+                    document.execCommand('selectAll',false,null);
+                });
+            })
+        },
+        accelerator: "CmdOrCtrl+N"
     }
 }
 //menus
-const MENUS = {
-    //start page
+const MENU_TEMPLATES = {
+    //start
     0: [
         {
             label: "File",
@@ -55,15 +100,39 @@ const MENUS = {
             ]
         }
     ],
-    //notebook page
+    //notebook
     1: [
         {
             label: "File",
             submenu: [
+                MENU_ITEMS.RENAME_NOTEBOOK,
+                MENU_ITEMS.DELETE_NOTEBOOK,
+                {type: "separator"},
+                MENU_ITEMS.NEW_NOTE,
+                {type: "separator"},
+                MENU_ITEMS.EXIT
+            ]
+        }
+    ],
+    //note
+    2: [
+        {
+            label: "File",
+            submenu: [
+                MENU_ITEMS.RENAME_NOTEBOOK,
+                MENU_ITEMS.DELETE_NOTEBOOK,
+                {type: "separator"},
+                MENU_ITEMS.NEW_NOTE,
+                {type: "separator"},
+                MENU_ITEMS.EXIT
+            ]
+        },
+        {
+            label: "Note",
+            submenu: [
                 {
-                    label: "Save Current Note",
+                    label: "Save Note",
                     click(){
-                        if(!currentNote.id) return alert("No note selected!");
                         db.run("UPDATE notes SET content = $content, date = $date WHERE note_id = $id", {
                             $content: document.getElementById("note-content").innerHTML,
                             $date: new Date(),
@@ -83,20 +152,20 @@ const MENUS = {
                     accelerator: "CmdOrCtrl+S"
                 },
                 {
-                    label: "Edit Current Note",
+                    label: "Edit Note",
                     click(){
-                        if(!currentNote.id) return alert("No note selected!");
                         document.getElementById("note-content").contentEditable = true;
                         document.getElementById("note-content").style.background = "white";
                         document.getElementById("note-content").focus();
                     },
                     accelerator: "CmdOrCtrl+E"
                 },
-                {type:'separator'},
                 {
-                    label: "Exit",
+                    label: "Rename Note",
                     click(){
-                        if(confirm("Are you sure you want to quit?")) app.quit();
+                        document.getElementById("note-title").contentEditable = true;
+                        document.getElementById("note-title").focus();
+                        document.execCommand('selectAll',false,null);
                     }
                 }
             ]
@@ -116,21 +185,28 @@ const showPage = (index) => {
     pages[index].style.display = "block";
     SETUPS[index]();
 }
-//show popup
-const togglePopup = (y, content) => {
+//toggle popup
+const togglePopup = (x, y, content) => {
+    let popup = document.getElementById("popup");
     if (!(popup.style.display === "block")) {
-        let popup = document.getElementById("popup");
         popup.style.display = "block";
         popup.style.position = "fixed";
-        popup.style.top = y + "px";
-        popup.style.left = "calc(80vw - 32px)"
+        popup.style.left = (x + 8) + "px";
+        popup.style.top = (y + 8) + "px";
         popup.innerHTML = "";
         for (let i = 0; i < content.length; i++) {
             popup.appendChild(content[i]);
         }
+        if(x + 8 + popup.offsetWidth > document.body.offsetWidth){
+            popup.style.left = (x - 8 - popup.offsetWidth) + "px";
+        }
     } else {
         popup.style.display = "none";
     }
+}
+//hides popup
+const hidePopup = () => {
+    document.getElementById("popup").style.display = "none";
 }
 //deletes a notebook based on id
 const deleteNotebook = (id) => {
@@ -140,18 +216,17 @@ const deleteNotebook = (id) => {
     db.run("DELETE FROM notes WHERE notebook_id = $id", {
         $id: id
     });
-    refresh();
-    togglePopup();
 };
 //renames notebook
 const renameNotebook = (name, id) => {
-    db.run("UPDATE notebooks SET name = $name WHERE notebook_id = $id", {
+    db.run("UPDATE notebooks SET name = $name, date_modified = $date WHERE notebook_id = $id", {
         $name: name,
+        $date: new Date(),
         $id: id
     }, (err) => {
         if(err) console.log(err);
         refresh();
-    })
+    });
 }
 //add a notebook to the list
 let addNotebook = (name, date, id) => {
@@ -174,25 +249,30 @@ let addNotebook = (name, date, id) => {
         el.contentEditable = false;
         renameNotebook(el.innerHTML, id);
     });
+    el.addEventListener("blur", () => {
+        el.contentEditable = false;
+        renameNotebook(el.innerHTML, id);
+    })
     button.addEventListener("click", (e) => {
         e.stopPropagation();
         let deleteButton = document.createElement("a");
         deleteButton.className = "popup-option";
         deleteButton.innerHTML = "Delete";
         deleteButton.addEventListener("click", () => {
-            togglePopup();
             deleteNotebook(id);
+            refresh();
+            hidePopup();
         });
         let renameButton = document.createElement("a");
         renameButton.className = "popup-option";
         renameButton.innerHTML = "Rename";
         renameButton.addEventListener("click", () => {
-            togglePopup();
+            hidePopup();
             el.contentEditable = true;
             el.focus();
-            document.execCommand('selectAll',false,null)
+            document.execCommand('selectAll',false,null);
         })
-        togglePopup((button.getBoundingClientRect().top + (button.offsetHeight / 2)), [deleteButton, renameButton]);
+        togglePopup(e.clientX, e.clientY, [deleteButton, renameButton]);
     })
     document.getElementById("notebook-list").appendChild(newNotebook);
 
@@ -224,9 +304,9 @@ const createNotebook = () => {
 }
 //refresh the notebooks
 const refresh = () => {
-    document.getElementById("notebook-list").innerHTML = "<tr><th>Name</th><th>Date Modified</th><th></th></tr>";
     db.all("SELECT notebook_id, name, date_modified FROM notebooks", (err, rows) => {
         if (err) return console.log(err);
+        document.getElementById("notebook-list").innerHTML = "<tr><th>Name</th><th>Date Modified</th><th></th></tr>";
         rows = rows.sort((a, b) => {
             return b.date_modified - a.date_modified
         });
@@ -246,11 +326,14 @@ const addNote = (name, id, date) => {
         currentNote.date = date;
         loadNote(id);
     });
+    newNote.dataset.id = id;
+    newNote.dataset.name = name;
+    newNote.dataset.date = date;
     document.getElementById("notes").appendChild(newNote);
 }
-//creates note
-const createNote = () => {
-    let noteName = document.getElementById("note-name").value;
+//creates note, returns note id
+const createNote = (name, callback) => {
+    let noteName = name;
 
     document.getElementById("note-name").value = "";
 
@@ -276,33 +359,38 @@ const createNote = () => {
                 $date: Date.now(),
                 $id: currentNotebook.id
             }, (err) => {
-                if (err) console.log(err);
+                if (err) return console.log(err);
+                callback();
             })
         })
     })
 }
 //refreshes the notes
-const refreshNotes = () => {
+const refreshNotes = (callback) => {
     let el = document.getElementById("notes");
-    el.innerHTML = "";
     db.all("SELECT note_id, name, date FROM notes WHERE notebook_id = $notebook_id", {
         $notebook_id: currentNotebook.id
     }, (err, rows) => {
         if (err) return console.log(err);
+        el.innerHTML = "";
         rows = rows.sort((a, b) => {
-            return b.date_modified - a.date_modified
+            return b.date - a.date
         });
         for (let i = 0; i < rows.length; i++) {
             addNote(rows[i].name, rows[i].note_id, rows[i].date);
         }
         document.getElementById("note-actions").style.display = "none";
         document.getElementById("note-content").style.display = "none";
-        document.getElementById("note-title").textContent = "There's nothing to show...";
+        document.getElementById("note-title").innerHTML = "There's nothing to show...<p>Create or select a note to get started!</p>";
         document.getElementById("note-content").style.display = "none";
+        
+        if(callback) callback();
     })
 }
 //load note
 const loadNote = () => {
+    setMenu(MENUS.NOTE);
+    
     //edit note details
     document.getElementById("note-title").textContent = currentNote.name;
 
@@ -322,16 +410,48 @@ const loadNote = () => {
         document.getElementById("note-actions").style.display = "block";
     })
 }
+//rename note
+const renameNote = (name, id) => {
+    let date = new Date();
+    db.run("UPDATE notebooks SET date_modified = $date WHERE notebook_id = $id", {
+        $date: date,
+        $id: currentNotebook.id
+    }, (err) => {
+        if(err) console.log(err);
+    });
+    db.run("UPDATE notes SET date = $date, name = $name WHERE note_id = $id", {
+        $date: date,
+        $name: name,
+        $id: id
+    }, (err) => {
+        if(err) return console.log(err);
+        currentNote.date = date;
+        currentNote.name = name;
+        refreshNotes(loadNote);
+    });
+}
+//load most recent note
+const loadNewestNote = (callback) => {
+    callback = callback || loadNote;
+    
+    let el = document.getElementsByClassName("note")[0];
+    currentNote.id = el.dataset.id;
+    currentNote.name = el.dataset.name;
+    currentNote.date = el.dataset.date;
+    loadNote();
+    
+    callback();
+}
 //set menu based on page
-const setMenu = (page) => {
-    const menu = Menu.buildFromTemplate(MENUS[page]);
+const setMenu = (menu_id) => {
+    const menu = Menu.buildFromTemplate(MENU_TEMPLATES[menu_id]);
     Menu.setApplicationMenu(menu);
 }
 //setup app
 const setup = () => {
     if(DEV_MODE){
-        for(let i in MENUS){
-            MENUS[i].push(
+        for(let i in MENU_TEMPLATES){
+            MENU_TEMPLATES[i].push(
             {
                 label: "Debug",
                 submenu: [
@@ -354,7 +474,7 @@ const setup = () => {
         }
     }
     
-    setMenu(PAGES.START);
+    setMenu(MENUS.START);
 
     //initialize db
     db.run("CREATE TABLE IF NOT EXISTS notebooks (notebook_id INTEGER PRIMARY KEY, name TEXT, date_modified INTEGER)");
@@ -362,6 +482,32 @@ const setup = () => {
 
     //initialize page
     refresh();
+    
+    //set up stuff so renaming notes works
+    let noteTitle = document.getElementById("note-title");
+    noteTitle.addEventListener("keypress", (e) => {
+        if(e.keyCode !== 13) return;
+        e.preventDefault();
+        noteTitle.contentEditable = false;
+        renameNote(noteTitle.innerHTML, currentNote.id);
+    });
+    noteTitle.addEventListener("blur", () => {
+        noteTitle.contentEditable = false;
+        renameNote(noteTitle.innerHTML, currentNote.id);
+    });
+    
+    //set up stuff so renaming notebooks works
+    let notebookTitle = document.getElementById("notebook-title");
+    notebookTitle.addEventListener("keypress", (e) => {
+        if(e.keyCode !== 13) return;
+        e.preventDefault();
+        notebookTitle.contentEditable = false;
+        renameNotebook(notebookTitle.innerHTML, currentNotebook.id);
+    });
+    notebookTitle.addEventListener("blur", () => {
+        notebookTitle.contentEditable = false;
+        renameNotebook(notebookTitle.innerHTML, currentNotebook.id);
+    });
 }
 
 setup();
@@ -371,6 +517,9 @@ let inputs = document.getElementsByClassName("input");
 for (let i = 0; i < inputs.length; i++) {
     inputs[i].innerHTML += "<div class = 'underline background-accent'></div>";
 }
+
+//hide popup when clicked on outside
+document.addEventListener("click", hidePopup);
 
 //create notebook button
 document.getElementById("create-button").addEventListener("click", createNotebook);
@@ -388,11 +537,13 @@ document.getElementById("back-button").addEventListener("click", () => {
 });
 
 //create note button
-document.getElementById("create-note-button").addEventListener("click", createNote);
+document.getElementById("create-note-button").addEventListener("click", () => {
+    createNote(document.getElementById("note-name").value, loadNewestNote);
+});
 //do the same thing for the enter button
 document.getElementById("note-name").addEventListener("keypress", (e) => {
     if (e.keyCode != 13) return;
-    createNote();
+    createNote(document.getElementById("note-name").value ,loadNewestNote);
 })
 
 //delete note button
@@ -402,8 +553,7 @@ document.getElementById("delete-note").addEventListener("click", () => {
     }, (err) => {
         if (err) return console.log(err);
         currentNote = {};
-        document.getElementById("note-title").textContent = "There's nothing to show...";
-        document.getElementById("note-date").textContent = "Select a note or create one to get started!";
+        document.getElementById("note-title").textContent = "There's nothing to show...<p>Create or select a note to get started!</p>";
         document.getElementById("note-content").style.display = "none";
         refreshNotes();
     })
@@ -414,7 +564,6 @@ document.getElementById("edit-note").addEventListener("click", () => {
     document.getElementById("note-content").style.background = "white";
     document.getElementById("note-content").focus();
 });
-
 //save note button
 document.getElementById("save-note").addEventListener("click", () => {
     let content = document.getElementById("note-content");
@@ -436,6 +585,13 @@ document.getElementById("save-note").addEventListener("click", () => {
         if (err) return console.log(err)
     });
 });
+//rename note button
+document.getElementById("rename-note").addEventListener("click", () => {
+    let noteTitle = document.getElementById("note-title");
+    noteTitle.contentEditable = true;
+    noteTitle.focus();
+    document.execCommand('selectAll',false,null);
+});
 
 //make shadow appear under note-header
 document.getElementById("note-content").addEventListener("scroll", () => {
@@ -447,3 +603,27 @@ document.getElementById("note-content").addEventListener("scroll", () => {
         el.style.boxShadow = "none";
     }
 })
+
+//notebook options button
+document.getElementById("notebook-options").addEventListener("click", (e) => {
+    e.stopPropagation();
+    let deleteButton = document.createElement("a");
+    deleteButton.className = "popup-option";
+    deleteButton.innerHTML = "Delete Notebook";
+    deleteButton.addEventListener("click", () => {
+        deleteNotebook(currentNotebook.id);
+        showPage(PAGES.START);
+        hidePopup();
+    });
+    let renameButton = document.createElement("a");
+    renameButton.className = "popup-option";
+    renameButton.innerHTML = "Rename";
+    renameButton.addEventListener("click", () => {
+        hidePopup();
+        let el = document.getElementById("notebook-title");
+        el.contentEditable = true;
+        el.focus();
+        document.execCommand('selectAll',false,null);
+    })
+    togglePopup(e.clientX, e.clientY, [deleteButton, renameButton]);
+});

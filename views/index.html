@@ -7,51 +7,58 @@
         <link href = "../static/style.css" rel = "stylesheet">
     </head>
     <body>
-        <main class = "center page start">
-            <h1 id = "title">Welcome!</h1>
-            <p style = "text-align:center;">Select an existing notebook or start a new one</p>
+        <!--main view-->
+        <main>
+            <main class = "center page start">
+                <h1 id = "title">Welcome!</h1>
+                <p style = "text-align:center;">Select an existing notebook or start a new one</p>
 
-            <div id = "container">
-                <div id = "notebooks">
-                    <table id = "notebook-list" cellpadding = "16px"></table>
-                </div>
-                <div id = "create-new" class = "background-primary">
-                    <div class = "input">
-                        <input id = "notebook-name" placeholder="Enter the name of your notebook...">
+                <div id = "container">
+                    <div id = "notebooks">
+                        <table id = "notebook-list" cellpadding = "16px"></table>
                     </div>
-                    <a class = "button background-accent" id = "create-button">Create</a>
-                </div>
-            </div>
-            <div id = "popup"></div>
-        </main>
-        <main class = "page">
-            <header class = "background-primary">
-                <i class = "material-icons" id = "back-button">arrow_back</i>
-                <h1 id = "notebook-title">Notebook Name</h1>
-            </header>
-            <nav class = "sidebar">
-                <div id = "notes"></div>
-                <div id = "new-note" class = "background-primary">
-                    <div class = "input">
-                        <input id = "note-name" placeholder = "Enter the name of the note...">
-                    </div>
-                    <a class = "button background-accent" id = "create-note-button">Create</a>
-                </div>
-            </nav>
-            <main id = "note-container">
-                <div id = "note-header">
-                    <div id = "note-details">
-                        <h1 id = "note-title">There's nothing to show...</h1>
-                    </div>
-                    <div id = "note-actions">
-                        <a class = "button background-green" id = "edit-note">Edit</a>
-                        <a class = "button background-blue" id = "save-note">Save</a>
-                        <a class = "button background-red" id = "delete-note">Delete</a>
+                    <div id = "create-new" class = "background-primary">
+                        <div class = "input">
+                            <input id = "notebook-name" placeholder="Enter the name of your notebook...">
+                        </div>
+                        <a class = "button background-accent" id = "create-button">Create</a>
                     </div>
                 </div>
-                <div id = "note-content"></div>
+            </main>
+            <main class = "page">
+                <header class = "background-primary">
+                    <i class = "material-icons" id = "back-button">arrow_back</i>
+                    <h1 id = "notebook-title">Notebook Name</h1>
+                    <i class = "material-icons" id = "notebook-options">more_vert</i>
+                </header>
+                <nav class = "sidebar">
+                    <div id = "notes"></div>
+                    <div id = "new-note" class = "background-primary">
+                        <div class = "input">
+                            <input id = "note-name" placeholder = "Enter the name of the note...">
+                        </div>
+                        <a class = "button background-accent" id = "create-note-button">Create</a>
+                    </div>
+                </nav>
+                <main id = "note-container">
+                    <div id = "note-header">
+                        <div id = "note-details">
+                            <h1 id = "note-title">There's nothing to show...</h1>
+                        </div>
+                        <div id = "note-actions">
+                            <a class = "button background-green" id = "edit-note">Edit</a>
+                            <a class = "button background-blue" id = "save-note">Save</a>
+                            <a class = "button background-orange" id = "rename-note">Rename</a>
+                            <a class = "button background-red" id = "delete-note">Delete</a>
+                        </div>
+                    </div>
+                    <div id = "note-content"></div>
+                </main>
             </main>
         </main>
+        
+        <!--modal windows-->
+        <div id = "popup"></div>
         <script>
             require("../static/renderer.js")
         </script>
